@@ -34,9 +34,9 @@ target_include_directories (trace PUBLIC
 	)
 
 # --- EXECUTABLES ---
-add_executable(main
-	main.cpp)
-target_link_libraries(main PUBLIC trace)
+add_executable(twobody
+	twobody.cpp)
+target_link_libraries(twobody PUBLIC trace)
 #target_compile_features(p2 PUBLIC cxx_std_11)
 
 # --- TESTS ---

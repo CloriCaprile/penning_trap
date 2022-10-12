@@ -1,9 +1,17 @@
+from fileinput import filename
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
+import sys
 
-df = pd.read_csv("data2part_10000.txt", names=["p", "t", "x", "y", "z", "vx", "vy", "vz"], sep=" ")
+try:
+    filename = sys.argv[1]
+except IndexError:
+    raise SystemExit(f"Usage: {sys.argv[0]} <filename>")
+
+df = pd.read_csv(filename, names=["p", "t", "x", "y", "z", "vx", "vy", "vz"], sep=" ")
+
 
 # ---------- SINGLE PARTICLE : z(t) ----------
 fig1 = px.line(df[df.p==1], x='t', y='z', template='simple_white')
@@ -17,7 +25,7 @@ fig2 = px.line(df, x='x', y='y', color='p', template='simple_white')
 fig2.update_yaxes(
     scaleanchor = "x",
     scaleratio = 1,
-  )
+)
 fig2.write_image("double_xy.pdf")
 
 
@@ -28,7 +36,7 @@ fig3 = px.line(df, x='x', y='vx', color='p', template='simple_white')
 fig3.update_yaxes(
     scaleanchor = "x",
     scaleratio = 1,
-  )
+)
 fig3.write_image("double_xvx.pdf")
 
 
@@ -39,7 +47,7 @@ fig4 = px.line(df, x='z', y='vz', color='p', template='simple_white')
 fig4.update_yaxes(
     scaleanchor = "x",
     scaleratio = 1,
-  )
+)
 fig4.write_image("double_zvz.pdf")
 
 # ---------- TWO PARTICLES : XYZ ----------

@@ -23,10 +23,12 @@ public:
     // Member variables
     double B0, V0, d;
     std::vector<Particle> particles;
+    bool mutual_interactions;
 
-    // Constructor
-    PenningTrap(double B0_in, double V0_in, double d_in, std::vector<Particle> particles_in);
-    // Constructor
+    // Constructors
+    PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in, const bool mutual_interactions);
+    PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in);
+    // Default Constructor
     PenningTrap();
 
     // Add a particle to the trap

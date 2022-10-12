@@ -25,6 +25,17 @@ std::string Particle::info()
 }
 
 // Constructor of class PenningTrap
+PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in, const bool mutual_int_in)
+{
+    // assign input values of magnetic field, potential and distance
+    // takes vector of Particles as input
+    B0 = B0_in;
+    V0 = V0_in;
+    d = d_in;
+    particles = particles_in;
+    mutual_interactions = mutual_int_in;
+}
+
 PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in)
 {
     // assign input values of magnetic field, potential and distance
@@ -33,9 +44,10 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
     V0 = V0_in;
     d = d_in;
     particles = particles_in;
+    mutual_interactions = true;
 }
 
-// Constructor
+// Default Constructor
 PenningTrap::PenningTrap()
 {
     B0 = 96.5;
@@ -86,7 +98,6 @@ arma::vec PenningTrap::force_particle(const int i, const int j)
         // calcluate the difference vector
         arma::vec R = p1.r - p2.r;
         // ..its norm
-        //double s = sqrt(R(0) * R(0) + R(1) * R(1) + R(2) * R(2));
         double s = norm(R);
         // Coulomb interaction between the two particles
         F = k_e * p1.q * p2.q * R / (s * s * s);
@@ -96,14 +107,19 @@ arma::vec PenningTrap::force_particle(const int i, const int j)
 // The total force on particle_i from the other particles
 arma::vec PenningTrap::total_force_particles(const int i)
 {
-    arma::vec F = arma::vec(3);
-    // no need to skip i=j case because force_particle(i,i)=0 by design
-    for (int j = 0; j < particles.size(); j++)
-    {
-        F += force_particle(i, j);
+    if (mutual_interactions == false){
+        return arma::vec(3).fill(0.);
     }
+    else {
+        arma::vec F = arma::vec(3);
+        // no need to skip i=j case because force_particle(i,i)=0 by design
+        for (int j = 0; j < particles.size(); j++)
+        {
+            F += force_particle(i, j);
+        }
 
-    return F;
+        return F;
+    }
 }
 
 // The total force on particle_i from the external fields
