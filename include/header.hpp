@@ -1,7 +1,7 @@
 
 // include guard
-#ifndef __useful_hpp__
-#define __useful_hpp__
+#ifndef __header_hpp__
+#define __header_hpp__
 
 // include headers
 #include <iostream>
@@ -18,4 +18,4 @@ std::string scientific_format(double d, const int &width, const int &prec);
 std::string scientific_format(const std::vector<double> &v, const int &width, const int &prec);
 
 
-#endif // end of include guard __useful_hpp__
+#endif // end of include guard 

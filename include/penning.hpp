@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include <armadillo>
+#include "particle.hpp"
 
 
 // Penning trap simulator.

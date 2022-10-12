@@ -9,8 +9,6 @@
 #include <cassert>
 #include <armadillo>
 #include "header.hpp"
-#include "particle.hpp"
-#include "penning.hpp"
 
 // define global variable - electrostatic constant
 #define k_e 138935.333

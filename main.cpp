@@ -3,7 +3,9 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
-#include "useful.hpp"
+#include "header.hpp"
+#include "penning.hpp"
+#include "particle.hpp"
 
 
 int main()
@@ -15,7 +17,7 @@ int main()
     double B0 = 96.5, V0 = 9.65 * 1e+8, d = 1e+4;
 
     // steps, boundary t values
-    int n = 1000;
+    int n = 100000;
     double t_max = 30., t_min = 0., h = (t_max - t_min) / n;
 
     arma::vec t(n + 1);
@@ -63,7 +65,7 @@ int main()
               << " " << scientific_format(trap.particles[0].r(0), width, prec)
               << " " << scientific_format(trap.particles[0].r(1), width, prec)
               << " " << scientific_format(trap.particles[0].r(2), width, prec) << std::endl;
-        trap.evolve_forward_Euler(h);
+        trap.evolve_RK4(h);
     }
 
     // close file

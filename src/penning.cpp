@@ -8,8 +8,9 @@
 #include <cmath>
 #include <cassert>
 #include <armadillo>
-#include "useful.hpp"
-
+#include "header.hpp"
+#include "particle.hpp"
+#include "penning.hpp"
 
 // define global variable - electrostatic constant
 #define k_e 138935.333
@@ -34,16 +35,14 @@ PenningTrap::PenningTrap(double B0_in, double V0_in, double d_in, std::vector<Pa
     particles = particles_in;
 }
 
-// Constructor 
+// Constructor
 PenningTrap::PenningTrap()
 {
     B0 = 96.5;
-    V0 = 9.65*1e+8;
+    V0 = 9.65 * 1e+8;
     d = 1e+4;
-    particles = p();
-
+    particles.push_back(Particle());
 }
-
 
 // Add a particle to the trap
 void PenningTrap::add_particle(Particle p_in)
@@ -72,33 +71,33 @@ arma::vec PenningTrap::external_B_field(arma::vec r)
 
 // Force on particle_i from particle_j
 arma::vec PenningTrap::force_particle(int i, int j)
-{   
-    if(i == j) //self interaction is not a thing here...
+{
+    if (i == j) // self interaction is not a thing here...
     {
         arma::vec zero = arma::vec(3).fill(0.);
         return zero;
     }
     else
-    { 
-    // take the two particles
-    Particle p1 = particles.at(i);
-    Particle p2 = particles.at(j);
-    arma::vec F = arma::vec(3);
-    // calcluate the difference vector
-    arma::vec R = p1.r - p2.r;
-    // ..its norm
-    double s = sqrt(R(0) * R(0) + R(1) * R(1) + R(2) * R(2));
-    // Coulomb interaction between the two particles
-    F = k_e * p1.q * p2.q * R / (s * s * s);
-    return F;
+    {
+        // take the two particles
+        Particle p1 = particles.at(i);
+        Particle p2 = particles.at(j);
+        arma::vec F = arma::vec(3);
+        // calcluate the difference vector
+        arma::vec R = p1.r - p2.r;
+        // ..its norm
+        double s = sqrt(R(0) * R(0) + R(1) * R(1) + R(2) * R(2));
+        // Coulomb interaction between the two particles
+        F = k_e * p1.q * p2.q * R / (s * s * s);
+        return F;
     }
 }
 // The total force on particle_i from the other particles
 arma::vec PenningTrap::total_force_particles(int i)
 {
     arma::vec F = arma::vec(3);
-    //no need to skip i=j case because force_particle(i,i)=0 by design
-    for (int j = 0; j < particles.size(); j++) 
+    // no need to skip i=j case because force_particle(i,i)=0 by design
+    for (int j = 0; j < particles.size(); j++)
     {
         F += force_particle(i, j);
     }
@@ -136,12 +135,12 @@ void PenningTrap::evolve_forward_Euler(double h)
         arma::vec tmp = arma::vec(3);
         tmp = p.v;
 
-        // dv/dt = a/m  ==>  v_i+1 = v_i + h*F_i/m   
-        p.v += total_force(i)*(h/p.m);
+        // dv/dt = a/m  ==>  v_i+1 = v_i + h*F_i/m
+        p.v += total_force(i) * (h / p.m);
         // dr/dt = v ==> r_i+i = r_i + h*v_i
         p.r += h * tmp;
 
-        //save changes in new state of the particle
+        // save changes in new state of the particle
         Particle p_new(p.q, p.m, p.r, p.v);
 
         // append the particle at t+dt at the end
@@ -150,4 +149,39 @@ void PenningTrap::evolve_forward_Euler(double h)
     }
     // update the whole system with the new state at t+dt
     particles = new_state;
+}
+
+// Evolve the system one time step (h) using Runge-Kutta 4th order
+void PenningTrap::evolve_RK4(double h)
+{
+    std::vector<Particle> tmp_particles = particles;
+    arma::mat kr_all = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kv_all = arma::mat(3, particles.size()).fill(0.);
+
+    //coefficient for various RK steps
+    arma::vec coeff1 = arma::vec("0.5 0.5 1.0 0.0");
+    arma::vec coeff2 = arma::vec("1./6 1./3 1./3 1./6");
+
+    for (int j = 0; j <= 3; j++)
+    {
+        // for every particle
+        for (int i = 0; i < particles.size(); i++)
+        {
+            Particle p = particles.at(i);
+
+            kv_all.col(i) = total_force(i) * (h / p.m);
+            kr_all.col(i) = h * particles[i].v;
+
+            particles[i].r += coeff1(j) * kr_all.col(i);
+            particles[i].v += coeff1(j) * kv_all.col(i);
+
+            // evolve system by coeff2*h
+            evolve_forward_Euler( coeff1(j)* h);
+
+            tmp_particles[i].r += kr_all.col(i)*coeff2(j);
+            tmp_particles[i].v += kv_all.col(i)*coeff2(j);
+        }
+    }
+    particles = tmp_particles;
+
 }

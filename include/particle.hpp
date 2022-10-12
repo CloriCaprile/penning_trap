@@ -1,6 +1,6 @@
 // include guard
-#ifndef __penning_hpp__
-#define __penning_hpp__
+#ifndef __particle_hpp__
+#define __particle_hpp__
 
 // include headers
 #include <iostream>
@@ -33,4 +33,4 @@ public:
 };
 
 
-#endif // end of include guard __useful_hpp__
+#endif // end of include guard 
