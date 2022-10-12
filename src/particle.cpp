@@ -30,3 +30,13 @@ Particle::Particle()
     r = arma::vec(3).fill(0.);
     v = arma::vec(3).fill(0.);
 }
+
+Particle::Particle(const Particle &other): q{other.q}, m{other.m}, r{other.r}, v{other.v} {}
+
+Particle Particle::operator=(const Particle &other) {
+    q = other.q;
+    m = other.m;
+    r = other.r;
+    v = other.v;
+    return *this;
+}

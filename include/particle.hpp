@@ -24,8 +24,12 @@ public:
     arma::vec v = arma::vec(3);
     // constructor
     Particle(double q_in, double m_in, arma::vec r_in, arma::vec v_in);
-    // constructor
+    // default constructor
     Particle();
+    // copy constructor
+    Particle(const Particle &other);
+    
+    Particle operator=(const Particle &other);
 
     // Method that returns particle values in a string
     // Format: "q m r_x r_y r_z v_x v_y v_z"
