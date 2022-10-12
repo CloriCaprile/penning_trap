@@ -39,8 +39,8 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
 PenningTrap::PenningTrap()
 {
     B0 = 96.5;
-    V0 = 9.65 * 1e+8;
-    d = 1e+4;
+    V0 = 2.41 * 1e+6;
+    d = 500;
     particles.push_back(Particle());
 }
 
