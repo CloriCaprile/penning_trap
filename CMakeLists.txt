@@ -14,7 +14,10 @@ project(penningtrap
 enable_testing()
 
 # --- LIBRARY ---
-add_library(trace src/header.cpp)
+add_library(trace 
+	src/header.cpp
+	src/particle.cpp
+	src/penning.cpp)
 
 #find_package(OpenMP REQUIRED)
 #target_link_libraries(trace PUBLIC OpenMP::OpenMP_CXX)
@@ -37,12 +40,12 @@ target_link_libraries(main PUBLIC trace)
 #target_compile_features(p2 PUBLIC cxx_std_11)
 
 # --- TESTS ---
-add_executable(particle-test
-    test/particle-test.cpp)
-target_link_libraries(particle-test PUBLIC trace)
-add_test(NAME particle-test COMMAND particle-test)
+#add_executable(particle-test
+#    test/particle-test.cpp)
+#target_link_libraries(particle-test PUBLIC trace)
+#add_test(NAME particle-test COMMAND particle-test)
 
-add_executable(penning-test
-    test/penning-test.cpp)
-target_link_libraries(pennning-test PUBLIC trace)
-add_test(NAME penning-test COMMAND penning-test)
+#add_executable(penning-test
+#    test/penning-test.cpp)
+#target_link_libraries(pennning-test PUBLIC trace)
+#add_test(NAME penning-test COMMAND penning-test)
