@@ -25,7 +25,7 @@ std::string Particle::info()
 }
 
 // Constructor of class PenningTrap
-PenningTrap::PenningTrap(double B0_in, double V0_in, double d_in, std::vector<Particle> particles_in)
+PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in)
 {
     // assign input values of magnetic field, potential and distance
     // takes vector of Particles as input
@@ -45,13 +45,13 @@ PenningTrap::PenningTrap()
 }
 
 // Add a particle to the trap
-void PenningTrap::add_particle(Particle p_in)
+void PenningTrap::add_particle(const Particle p_in)
 {
     particles.push_back(p_in);
 }
 
 // External electric field at point r=(x,y,z)
-arma::vec PenningTrap::external_E_field(arma::vec r)
+arma::vec PenningTrap::external_E_field(const arma::vec r)
 {
     double tmp = V0 / (d * d);
     arma::vec E = arma::vec(3);
@@ -62,7 +62,7 @@ arma::vec PenningTrap::external_E_field(arma::vec r)
 }
 
 // External magnetic field at point r=(x,y,z)
-arma::vec PenningTrap::external_B_field(arma::vec r)
+arma::vec PenningTrap::external_B_field(const arma::vec r)
 {
     arma::vec B = arma::vec(3).fill(0.0);
     B(2) = B0;
@@ -70,7 +70,7 @@ arma::vec PenningTrap::external_B_field(arma::vec r)
 }
 
 // Force on particle_i from particle_j
-arma::vec PenningTrap::force_particle(int i, int j)
+arma::vec PenningTrap::force_particle(const int i, const int j)
 {
     if (i == j) // self interaction is not a thing here...
     {
@@ -86,14 +86,15 @@ arma::vec PenningTrap::force_particle(int i, int j)
         // calcluate the difference vector
         arma::vec R = p1.r - p2.r;
         // ..its norm
-        double s = sqrt(R(0) * R(0) + R(1) * R(1) + R(2) * R(2));
+        //double s = sqrt(R(0) * R(0) + R(1) * R(1) + R(2) * R(2));
+        double s = norm(R);
         // Coulomb interaction between the two particles
         F = k_e * p1.q * p2.q * R / (s * s * s);
         return F;
     }
 }
 // The total force on particle_i from the other particles
-arma::vec PenningTrap::total_force_particles(int i)
+arma::vec PenningTrap::total_force_particles(const int i)
 {
     arma::vec F = arma::vec(3);
     // no need to skip i=j case because force_particle(i,i)=0 by design
@@ -106,7 +107,7 @@ arma::vec PenningTrap::total_force_particles(int i)
 }
 
 // The total force on particle_i from the external fields
-arma::vec PenningTrap::total_force_external(int i)
+arma::vec PenningTrap::total_force_external(const int i)
 {
     Particle p = particles.at(i);
     arma::vec F = arma::vec(3);
@@ -117,7 +118,7 @@ arma::vec PenningTrap::total_force_external(int i)
 }
 
 // The total force on particle_i from both external fields and other particles
-arma::vec PenningTrap::total_force(int i)
+arma::vec PenningTrap::total_force(const int i)
 {
     arma::vec F = arma::vec(3);
     F = total_force_external(i) + total_force_particles(i);
@@ -125,7 +126,7 @@ arma::vec PenningTrap::total_force(int i)
 }
 
 // Evolve the system one time step (h) using Forward Euler
-void PenningTrap::evolve_forward_Euler(double h)
+void PenningTrap::evolve_forward_Euler(const double h)
 {
     std::vector<Particle> new_state;
     for (int i = 0; i < particles.size(); i++)
@@ -141,7 +142,7 @@ void PenningTrap::evolve_forward_Euler(double h)
         p.r += h * tmp;
 
         // save changes in new state of the particle
-        Particle p_new(p.q, p.m, p.r, p.v);
+        Particle p_new(p);
 
         // append the particle at t+dt at the end
         // of the new_state vector
@@ -152,7 +153,7 @@ void PenningTrap::evolve_forward_Euler(double h)
 }
 
 // Evolve the system one time step (h) using Runge-Kutta 4th order
-void PenningTrap::evolve_RK4(double h)
+void PenningTrap::evolve_RK4(const double h)
 {
     std::vector<Particle> tmp_particles = particles;
     arma::mat kr_all = arma::mat(3, particles.size()).fill(0.);
@@ -176,7 +177,7 @@ void PenningTrap::evolve_RK4(double h)
             particles[i].v += coeff1(j) * kv_all.col(i);
 
             // evolve system by coeff2*h
-            evolve_forward_Euler( coeff1(j)* h);
+            evolve_forward_Euler( coeff1(j) * h);
 
             tmp_particles[i].r += kr_all.col(i)*coeff2(j);
             tmp_particles[i].v += kv_all.col(i)*coeff2(j);
