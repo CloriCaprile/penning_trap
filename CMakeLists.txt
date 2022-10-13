@@ -37,13 +37,16 @@ target_include_directories (trace PUBLIC
 add_executable(twobody
 	twobody.cpp)
 target_link_libraries(twobody PUBLIC trace)
-#target_compile_features(p2 PUBLIC cxx_std_11)
+
+add_executable(error_analysis
+	error_analysis.cpp)
+target_link_libraries(error_analysis PUBLIC trace)
 
 # --- TESTS ---
-#add_executable(particle-test
-#    test/particle-test.cpp)
-#target_link_libraries(particle-test PUBLIC trace)
-#add_test(NAME particle-test COMMAND particle-test)
+add_executable(particle-test
+    test/particle-test.cpp)
+target_link_libraries(particle-test PUBLIC trace)
+add_test(NAME particle-test COMMAND particle-test)
 
 #add_executable(penning-test
 #    test/penning-test.cpp)
