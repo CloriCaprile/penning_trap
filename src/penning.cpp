@@ -204,7 +204,7 @@ void PenningTrap::evolve_forward_Euler(const double h)
 // Evolve the system one time step (h) using Runge-Kutta 4th order
 void PenningTrap::evolve_RK4(const double h)
 {
-    std::vector<Particle> initial_state = particles, final_state;
+    std::vector<Particle> initial_state = particles, final_state = particles;
     arma::mat kr_all1 = arma::mat(3, particles.size()).fill(0.);
     arma::mat kv_all1 = arma::mat(3, particles.size()).fill(0.);
     arma::mat kr_all2 = arma::mat(3, particles.size()).fill(0.);

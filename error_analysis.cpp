@@ -87,20 +87,14 @@ int main()
         z_obs_rk4 = trap1.particles[0].r(2);
         z_obs_fe = trap2.particles[0].r(2);
 
-        //err_x = std::fabs(x_anal - x_obs)/x_anal;
-        //err_y = std::fabs(y_anal - y_obs)/y_anal;
-        //err_z = std::fabs(z_anal - z_obs)/z_anal;
+        err_x = std::fabs(x_anal - x_obs_rk4)/x_anal;
+        err_y = std::fabs(y_anal - y_obs_rk4)/y_anal;
+        err_z = std::fabs(z_anal - z_obs_rk4)/z_anal;
 
         ofile   << " " << scientific_format(t(i), width, prec)
-                << " " << scientific_format(x_anal, width, prec)
-                << " " << scientific_format(y_anal, width, prec)
-                << " " << scientific_format(z_anal, width, prec)
-                << " " << scientific_format(x_obs_rk4, width, prec)
-                << " " << scientific_format(x_obs_fe, width, prec)
-                << " " << scientific_format(y_obs_rk4, width, prec)
-                << " " << scientific_format(y_obs_fe, width, prec)
-                << " " << scientific_format(z_obs_rk4, width, prec)
-                << " " << scientific_format(z_obs_fe, width, prec)
+                << " " << scientific_format(err_x, width, prec)
+                << " " << scientific_format(err_y, width, prec)
+                << " " << scientific_format(err_z, width, prec)
                 << std::endl;
     }
 
