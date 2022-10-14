@@ -53,7 +53,8 @@ PenningTrap::PenningTrap()
     B0 = 96.5;
     V0 = 2.41 * 1e+6;
     d = 500;
-    particles.push_back(Particle());
+    mutual_interactions = true;
+
 }
 
 // Constructor with number of random initial valued particles
