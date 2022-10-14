@@ -30,7 +30,7 @@ int main()
     const bool mutual_interactions = false;
 
     // steps, boundary t values
-    const int n = 100000;
+    const int n = 4000;
     const double t_max = 50., t_min = 0., h = (t_max - t_min) / n;
 
     // initial values
@@ -40,7 +40,7 @@ int main()
     const double omega0 = q*B0/m, omega2_z = 2.*q*V0/(m*d*d), discriminant=std::sqrt(omega0*omega0 - 2.*omega2_z);
     const double omega_plus = (omega0+discriminant)*0.5, omega_minus = (omega0-discriminant)*0.5;
     std::complex<double> sol_anal;
-    long double x_anal, y_anal, z_anal, x_obs_fe, x_obs_rk4, y_obs_fe, y_obs_rk4, z_obs_fe, z_obs_rk4, err_x, err_y, err_z;
+    long double x_anal, y_anal, z_anal, err_rk4, err_fe;
 
 
     // print parameters
@@ -80,21 +80,12 @@ int main()
     
         trap1.evolve_RK4(h);
         trap2.evolve_forward_Euler(h);
-        x_obs_rk4 = trap1.particles[0].r(0);
-        x_obs_fe = trap2.particles[0].r(0);
-        y_obs_rk4 = trap1.particles[0].r(1);
-        y_obs_fe = trap2.particles[0].r(1);
-        z_obs_rk4 = trap1.particles[0].r(2);
-        z_obs_fe = trap2.particles[0].r(2);
-
-        err_x = std::fabs(x_anal - x_obs_rk4)/x_anal;
-        err_y = std::fabs(y_anal - y_obs_rk4)/y_anal;
-        err_z = std::fabs(z_anal - z_obs_rk4)/z_anal;
+        err_rk4 = norm(trap1.particles[0].r - arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)))/norm(arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)));
+        err_fe = norm(trap2.particles[0].r - arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)))/norm(arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)));
 
         ofile   << " " << scientific_format(t(i), width, prec)
-                << " " << scientific_format(err_x, width, prec)
-                << " " << scientific_format(err_y, width, prec)
-                << " " << scientific_format(err_z, width, prec)
+                << " " << scientific_format(err_rk4, width, prec)
+                << " " << scientific_format(err_fe, width, prec)
                 << std::endl;
     }
 

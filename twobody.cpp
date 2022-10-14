@@ -15,7 +15,7 @@ int main()
 
     // trap parameters
     const double B0 = 96.5, V0 = 2.41 * 1e+6, d = 500;
-    const bool mutual_interactions = false;
+    const bool mutual_interactions = true;
 
     // steps, boundary t values
     const int n = 10000;
@@ -35,9 +35,9 @@ int main()
     PenningTrap trap(B0, V0, d, particles, mutual_interactions);
 
     // add one particle to the trap
-    trap.add_particle(Particle(q, m, arma::vec("20 0 20"), arma::vec("0 25 0")) );
+    trap.add_particle(Particle(q, m, arma::vec("20. 0. 20."), arma::vec("0. 25. 0.")) );
     // and another one
-    trap.add_particle(Particle(q, m, arma::vec("25 25 0"), arma::vec("0 40 5")) );
+    trap.add_particle(Particle(q, m, arma::vec("25. 25. 0."), arma::vec("0. 40. 5.")) );
 
     // open file in order to save data
     std::string interact_str = mutual_interactions ? "int_" : "nonint_";
@@ -48,21 +48,21 @@ int main()
 
     // time loop
     t(0) = t_min;
-    for (int i_particle = 1; i_particle <= 2; i_particle++){
-        for (int i = 0; i < n + 1; i++)
+    for (int i = 0; i < n + 1; i++){
+        for (int i_particle = 0; i_particle < 2; i_particle++)
         {
             t(i) = t_min + i * h;
             // save to file data: p_i t x y z vx vy vz
-            ofile   << i_particle
+            ofile   << i_particle+1
                     << " " << scientific_format(t(i), width, prec)
-                    << " " << scientific_format(trap.particles[0].r(0), width, prec)
-                    << " " << scientific_format(trap.particles[0].r(1), width, prec)
-                    << " " << scientific_format(trap.particles[0].r(2), width, prec)
-                    << " " << scientific_format(trap.particles[0].v(0), width, prec)
-                    << " " << scientific_format(trap.particles[0].v(1), width, prec)
-                    << " " << scientific_format(trap.particles[0].v(2), width, prec) << std::endl;
-            trap.evolve_RK4(h);
+                    << " " << scientific_format(trap.particles.at(i_particle).r(0), width, prec)
+                    << " " << scientific_format(trap.particles.at(i_particle).r(1), width, prec)
+                    << " " << scientific_format(trap.particles.at(i_particle).r(2), width, prec)
+                    << " " << scientific_format(trap.particles.at(i_particle).v(0), width, prec)
+                    << " " << scientific_format(trap.particles.at(i_particle).v(1), width, prec)
+                    << " " << scientific_format(trap.particles.at(i_particle).v(2), width, prec) << std::endl;
         }
+        trap.evolve_RK4(h);
     }
 
     // close file
