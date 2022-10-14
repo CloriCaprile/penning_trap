@@ -257,7 +257,7 @@ void PenningTrap::evolve_RK4(const double h)
         particles.at(i).r += 1 * kr_all3.col(i);
         particles.at(i).v += 1 * kv_all3.col(i);
     }
-    evolve_forward_Euler(0.5 * h);
+    evolve_forward_Euler(h);
     //k4
     for (int i = 0; i < particles.size(); i++)
     {
