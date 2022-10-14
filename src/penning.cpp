@@ -54,7 +54,6 @@ PenningTrap::PenningTrap()
     V0 = 2.41 * 1e+6;
     d = 500;
     mutual_interactions = true;
-
 }
 
 // Constructor with number of random initial valued particles
@@ -76,7 +75,6 @@ PenningTrap::PenningTrap(const int N)
     }
     // Defualt: interactions are on
     mutual_interactions = true;
-
 }
 
 // Add a particle to the trap
@@ -206,35 +204,73 @@ void PenningTrap::evolve_forward_Euler(const double h)
 // Evolve the system one time step (h) using Runge-Kutta 4th order
 void PenningTrap::evolve_RK4(const double h)
 {
-    std::vector<Particle> tmp_particles = particles;
-    arma::mat kr_all = arma::mat(3, particles.size()).fill(0.);
-    arma::mat kv_all = arma::mat(3, particles.size()).fill(0.);
+    std::vector<Particle> initial_state = particles, final_state;
+    arma::mat kr_all1 = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kv_all1 = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kr_all2 = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kv_all2 = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kr_all3 = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kv_all3 = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kr_all4 = arma::mat(3, particles.size()).fill(0.);
+    arma::mat kv_all4 = arma::mat(3, particles.size()).fill(0.);
 
-    // coefficient for various RK steps
-    arma::vec coeff1 = arma::vec("0.5 0.5 1.0 0.0");
-    arma::vec coeff2 = arma::vec("1./6 1./3 1./3 1./6");
-
-    for (int j = 0; j <= 3; j++)
+    //k1
+    for (int i = 0; i < particles.size(); i++)
     {
-        // for every particle
-        for (int i = 0; i < particles.size(); i++)
-        {
-            Particle p = particles.at(i);
-
-            kv_all.col(i) = total_force(i) * (h / p.m);
-            kr_all.col(i) = h * particles[i].v;
-
-            particles[i].r += coeff1(j) * kr_all.col(i);
-            particles[i].v += coeff1(j) * kv_all.col(i);
-
-            // evolve system by coeff2*h
-            evolve_forward_Euler(coeff1(j) * h);
-
-            tmp_particles[i].r += kr_all.col(i) * coeff2(j);
-            tmp_particles[i].v += kv_all.col(i) * coeff2(j);
-        }
+        kv_all1.col(i) = total_force(i) * h / particles.at(i).m;
+        kr_all1.col(i) = h * particles.at(i).v;
     }
-    particles = tmp_particles;
+
+
+    for (int i = 0; i < particles.size(); i++)
+    {
+        particles.at(i).r += 0.5 * kr_all1.col(i);
+        particles.at(i).v += 0.5 * kv_all1.col(i);
+    }
+    evolve_forward_Euler(0.5 * h);
+    //k2
+    for (int i = 0; i < particles.size(); i++)
+    {
+        kv_all2.col(i) = total_force(i) * h / particles.at(i).m;
+        kr_all2.col(i) = h * particles.at(i).v;
+    }
+
+
+    particles = initial_state;
+    for (int i = 0; i < particles.size(); i++)
+    {
+        particles.at(i).r += 0.5 * kr_all2.col(i);
+        particles.at(i).v += 0.5 * kv_all2.col(i);
+    }
+    evolve_forward_Euler(0.5 * h);
+    //k3
+    for (int i = 0; i < particles.size(); i++)
+    {
+        kv_all3.col(i) = total_force(i) * h / particles.at(i).m;
+        kr_all3.col(i) = h * particles.at(i).v;
+    }
+
+    particles = initial_state;
+
+    for (int i = 0; i < particles.size(); i++)
+    {
+        particles.at(i).r += 1 * kr_all3.col(i);
+        particles.at(i).v += 1 * kv_all3.col(i);
+    }
+    evolve_forward_Euler(0.5 * h);
+    //k4
+    for (int i = 0; i < particles.size(); i++)
+    {
+        kv_all4.col(i) = total_force(i) * h / particles.at(i).m;
+        kr_all4.col(i) = h * particles.at(i).v;
+    }
+
+    for (int i = 0; i < particles.size(); i++)
+    {
+        final_state.at(i).r = initial_state.at(i).r + kr_all1.col(i)/6 + kr_all2.col(i)/3 + kr_all3.col(i)/3+ kr_all4.col(i)/6;
+        final_state.at(i).v = initial_state.at(i).v + kv_all1.col(i)/6 + kv_all2.col(i)/3 + kv_all3.col(i)/3+ kv_all4.col(i)/6;
+    }
+    particles = final_state;
 }
 
 // Count the number of particles with |r| < d
