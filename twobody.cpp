@@ -39,7 +39,7 @@ int main()
     // and another one
     trap.add_particle(Particle(q, m, arma::vec("25 25 0"), arma::vec("0 40 5")) );
 
-    // open file in order to save to file (t,x(t),y(t),z(t))
+    // open file in order to save data
     std::string interact_str = mutual_interactions ? "int_" : "nonint_";
     std::string filename = "data2part_"+ interact_str + std::to_string(n) + ".txt";
 
@@ -52,7 +52,7 @@ int main()
         for (int i = 0; i < n + 1; i++)
         {
             t(i) = t_min + i * h;
-            // save to file "t x(t) y(t) z(t)" of the single particle
+            // save to file data: p_i t x y z vx vy vz
             ofile   << i_particle
                     << " " << scientific_format(t(i), width, prec)
                     << " " << scientific_format(trap.particles[0].r(0), width, prec)

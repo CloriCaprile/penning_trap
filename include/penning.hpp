@@ -31,6 +31,9 @@ public:
     // Default Constructor
     PenningTrap();
 
+    // Constructor with number of random initial valued particles
+    PenningTrap(const int N);
+
     // Add a particle to the trap
     void add_particle(const Particle p_in);
 
@@ -57,6 +60,9 @@ public:
     
     // Evolve the system one time step (h) using Forward Euler
     void evolve_forward_Euler(const double h);
+
+    // Count the number of particles with |r| < d
+    int count_particles_in(); 
 };
 #endif // end of include guard __penning_hpp__
 

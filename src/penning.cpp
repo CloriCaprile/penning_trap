@@ -56,6 +56,28 @@ PenningTrap::PenningTrap()
     particles.push_back(Particle());
 }
 
+// Constructor with number of random initial valued particles
+PenningTrap::PenningTrap(const int N)
+{
+    B0 = 96.5;
+    V0 = 2.41 * 1e+6;
+    d = 500;
+    // Set the seed for random number generator
+    arma::arma_rng::set_seed_random();
+
+    // Fill particles vector randomly
+    for (int i = 0; i < N; i++)
+    {
+        Particle p = Particle();
+        p.r = arma::vec(3).randn() * 0.1 * d;
+        p.v = arma::vec(3).randn() * 0.1 * d;
+        particles.push_back(p);
+    }
+    // Defualt: interactions are on
+    mutual_interactions = true;
+
+}
+
 // Add a particle to the trap
 void PenningTrap::add_particle(const Particle p_in)
 {
@@ -65,20 +87,30 @@ void PenningTrap::add_particle(const Particle p_in)
 // External electric field at point r=(x,y,z)
 arma::vec PenningTrap::external_E_field(const arma::vec r)
 {
-    double tmp = V0 / (d * d);
-    arma::vec E = arma::vec(3);
-    E(0) = tmp * r(0);
-    E(1) = tmp * r(1);
-    E(2) = -2 * tmp * r(2);
-    return E;
+    if (norm(r) <= d)
+    {
+        double tmp = V0 / (d * d);
+        arma::vec E = arma::vec(3);
+        E(0) = tmp * r(0);
+        E(1) = tmp * r(1);
+        E(2) = -2 * tmp * r(2);
+        return E;
+    }
+    else
+        return arma::vec(3).fill(0.0);
 }
 
 // External magnetic field at point r=(x,y,z)
 arma::vec PenningTrap::external_B_field(const arma::vec r)
 {
-    arma::vec B = arma::vec(3).fill(0.0);
-    B(2) = B0;
-    return B;
+    if (norm(r) <= d)
+    {
+        arma::vec B = arma::vec(3).fill(0.0);
+        B(2) = B0;
+        return B;
+    }
+    else
+        return arma::vec(3).fill(0.0);
 }
 
 // Force on particle_i from particle_j
@@ -107,10 +139,12 @@ arma::vec PenningTrap::force_particle(const int i, const int j)
 // The total force on particle_i from the other particles
 arma::vec PenningTrap::total_force_particles(const int i)
 {
-    if (mutual_interactions == false){
+    if (mutual_interactions == false)
+    {
         return arma::vec(3).fill(0.);
     }
-    else {
+    else
+    {
         arma::vec F = arma::vec(3);
         // no need to skip i=j case because force_particle(i,i)=0 by design
         for (int j = 0; j < particles.size(); j++)
@@ -175,7 +209,7 @@ void PenningTrap::evolve_RK4(const double h)
     arma::mat kr_all = arma::mat(3, particles.size()).fill(0.);
     arma::mat kv_all = arma::mat(3, particles.size()).fill(0.);
 
-    //coefficient for various RK steps
+    // coefficient for various RK steps
     arma::vec coeff1 = arma::vec("0.5 0.5 1.0 0.0");
     arma::vec coeff2 = arma::vec("1./6 1./3 1./3 1./6");
 
@@ -193,12 +227,23 @@ void PenningTrap::evolve_RK4(const double h)
             particles[i].v += coeff1(j) * kv_all.col(i);
 
             // evolve system by coeff2*h
-            evolve_forward_Euler( coeff1(j) * h);
+            evolve_forward_Euler(coeff1(j) * h);
 
-            tmp_particles[i].r += kr_all.col(i)*coeff2(j);
-            tmp_particles[i].v += kv_all.col(i)*coeff2(j);
+            tmp_particles[i].r += kr_all.col(i) * coeff2(j);
+            tmp_particles[i].v += kv_all.col(i) * coeff2(j);
         }
     }
     particles = tmp_particles;
+}
 
+// Count the number of particles with |r| < d
+int PenningTrap::count_particles_in()
+{
+    int cnt = 0;
+    for (int i = 0; i < particles.size(); i++)
+    {
+        if (norm(particles[i].r) < d)
+            cnt += 1;
+    }
+    return cnt;
 }
