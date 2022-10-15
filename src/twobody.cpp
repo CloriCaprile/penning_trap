@@ -41,7 +41,7 @@ int main()
 
     // open file in order to save data
     std::string interact_str = mutual_interactions ? "int_" : "nonint_";
-    std::string filename = "../plots/data2part_"+ interact_str + std::to_string(n) + ".txt";
+    std::string filename = "data2part_"+ interact_str + std::to_string(n) + ".txt";
 
     std::ofstream ofile;
     ofile.open(filename);

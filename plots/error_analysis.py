@@ -1,14 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-err_0004 = pd.read_csv("err_4000.txt",   names=["t", "e_rk", "e_fe"], sep=" ")
-err_0008 = pd.read_csv("err_8000.txt",   names=["t", "e_rk", "e_fe"], sep=" ")
-err_0016 = pd.read_csv("err_16000.txt",  names=["t", "e_rk", "e_fe"], sep=" ")
-err_0032 = pd.read_csv("err_32000.txt",  names=["t", "e_rk", "e_fe"], sep=" ")
-err_0064 = pd.read_csv("err_64000.txt",  names=["t", "e_rk", "e_fe"], sep=" ")
-err_0128 = pd.read_csv("err_128000.txt", names=["t", "e_rk", "e_fe"], sep=" ")
-err_0256 = pd.read_csv("err_256000.txt", names=["t", "e_rk", "e_fe"], sep=" ")
-err_1024 = pd.read_csv("err_1024000.txt", names=["t", "e_rk", "e_fe"], sep=" ")
+err_0004 = pd.read_csv("../build/err_4000.txt",   names=["t", "e_rk", "e_fe"], sep=" ")
+err_0008 = pd.read_csv("../build/err_8000.txt",   names=["t", "e_rk", "e_fe"], sep=" ")
+err_0016 = pd.read_csv("../build/err_16000.txt",  names=["t", "e_rk", "e_fe"], sep=" ")
+err_0032 = pd.read_csv("../build/err_32000.txt",  names=["t", "e_rk", "e_fe"], sep=" ")
+err_0064 = pd.read_csv("../build/err_64000.txt",  names=["t", "e_rk", "e_fe"], sep=" ")
+err_0128 = pd.read_csv("../build/err_128000.txt", names=["t", "e_rk", "e_fe"], sep=" ")
+err_0256 = pd.read_csv("../build/err_256000.txt", names=["t", "e_rk", "e_fe"], sep=" ")
+err_1024 = pd.read_csv("../build/err_1024000.txt", names=["t", "e_rk", "e_fe"], sep=" ")
 
 # Plot style options
 w = 10
