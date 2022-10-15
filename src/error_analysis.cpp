@@ -30,7 +30,7 @@ int main()
     const bool mutual_interactions = false;
 
     // steps, boundary t values
-    const int n = 64000;
+    const int n = 4000;
     const double t_max = 50., t_min = 0., h = (t_max - t_min) / n;
 
     // initial values
