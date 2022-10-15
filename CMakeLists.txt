@@ -35,11 +35,11 @@ target_include_directories (trace PUBLIC
 
 # --- EXECUTABLES ---
 add_executable(twobody
-	twobody.cpp)
+	src/twobody.cpp)
 target_link_libraries(twobody PUBLIC trace)
 
 add_executable(error_analysis
-	error_analysis.cpp)
+	src/error_analysis.cpp)
 target_link_libraries(error_analysis PUBLIC trace)
 
 # --- TESTS ---

@@ -30,7 +30,7 @@ int main()
     const bool mutual_interactions = false;
 
     // steps, boundary t values
-    const int n = 4000;
+    const int n = 1024000;
     const double t_max = 50., t_min = 0., h = (t_max - t_min) / n;
 
     // initial values
@@ -62,7 +62,7 @@ int main()
     trap2.add_particle(Particle(q, m, arma::vec(std::to_string(x0)+" 0 "+ std::to_string(z0)), arma::vec("0 "+std::to_string(v0)+" 0")) );
 
     // open file in order to save to file (t,x(t),y(t),z(t))
-    std::string filename = "err_"+ std::to_string(n) + ".txt";
+    std::string filename = "../plots/err_"+ std::to_string(n) + ".txt";
 
     std::ofstream ofile;
     ofile.open(filename);
