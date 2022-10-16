@@ -172,3 +172,39 @@ plt.xlabel("$z$ ($\mu$m)")
 plt.ylabel("$v_z$ (m/s)")
 plt.savefig("int_zvz.pdf") if save_fig else plt.show()
 plt.cla()
+
+# ----------------------- 3D PLOT -----------------------
+
+## NON INTERACTING
+
+fig = plt.figure(figsize=(w,h))
+ax = plt.axes(projection='3d')
+
+p1, = ax.plot3D(df_nonint.x[mask_p1],            df_nonint.y[mask_p1],            df_nonint.z[mask_p1], color=cmap(0))
+p2, = ax.plot3D(df_nonint.x[np.argmax(mask_p1)], df_nonint.y[np.argmax(mask_p1)], df_nonint.z[np.argmax(mask_p1)],  'o', color=cmap(1))
+p3, = ax.plot3D(df_nonint.x[mask_p2],            df_nonint.y[mask_p2],            df_nonint.z[mask_p2], color=cmap(2))
+p4, = ax.plot3D(df_nonint.x[np.argmax(mask_p2)], df_nonint.y[np.argmax(mask_p2)], df_nonint.z[np.argmax(mask_p2)],  'o', color=cmap(3))
+plt.legend([p1, p3, (p2, p4)], ['p1', 'p2', 'initial state'], handler_map={tuple: HandlerTuple(ndivide=None)}, loc='best')
+ax.set_xlabel("$x$ ($\mu$m)")
+ax.set_ylabel("$y$ (m/s)")
+ax.set_zlabel("$z$ (m/s)")
+ax.view_init(20, 20)
+plt.savefig("non_int_xyz.pdf") if save_fig else plt.show()
+plt.cla()
+
+## INTERACTING
+
+fig = plt.figure(figsize=(w,h))
+ax = plt.axes(projection='3d')
+
+p1, = ax.plot3D(df_int.x[mask_p1],            df_int.y[mask_p1],            df_int.z[mask_p1], color=cmap(0))
+p2, = ax.plot3D(df_int.x[np.argmax(mask_p1)], df_int.y[np.argmax(mask_p1)], df_int.z[np.argmax(mask_p1)],  'o', color=cmap(1))
+p3, = ax.plot3D(df_int.x[mask_p2],            df_int.y[mask_p2],            df_int.z[mask_p2], color=cmap(2))
+p4, = ax.plot3D(df_int.x[np.argmax(mask_p2)], df_int.y[np.argmax(mask_p2)], df_int.z[np.argmax(mask_p2)],  'o', color=cmap(3))
+plt.legend([p1, p3, (p2, p4)], ['p1', 'p2', 'initial state'], handler_map={tuple: HandlerTuple(ndivide=None)}, loc='best')
+ax.set_xlabel("$x$ ($\mu$m)")
+ax.set_ylabel("$y$ (m/s)")
+ax.set_zlabel("$z$ (m/s)")
+ax.view_init(20, 20)
+plt.savefig("int_xyz.pdf") if save_fig else plt.show()
+plt.cla()
