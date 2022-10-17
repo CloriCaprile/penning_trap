@@ -78,3 +78,4 @@ plt.plot(err_0064.t, err_0064.e_fe, color=cmap(5), label='FE - 64k')
 
 plt.legend(loc='best')
 plt.savefig("err_rk4_fe.pdf") if save_fig else plt.show()
+
