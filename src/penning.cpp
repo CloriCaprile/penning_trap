@@ -36,6 +36,31 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
     mutual_interactions = mutual_int_in;
 }
 
+PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed = -1, const bool mutual_int_in=true){
+    
+    // Set the seed for random number generator
+    if (seed < 0){
+        arma::arma_rng::set_seed_random();
+    } else {
+        arma::arma_rng::set_seed(seed);
+    }
+    // assign input values of magnetic field, potential and distance
+    B0 = B0_in;
+    V0 = V0_in;
+    d = d_in;
+
+    // Fill particles vector randomly
+    for (int i = 0; i < N; i++)
+    {
+        Particle p = Particle();
+        p.r = arma::vec(3).randn() * 0.1 * d;
+        p.v = arma::vec(3).randn() * 0.1 * d;
+        particles.push_back(p);
+    }
+
+    mutual_interactions = mutual_int_in;
+}
+/*
 PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in)
 {
     // assign input values of magnetic field, potential and distance
@@ -47,6 +72,31 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
     mutual_interactions = true;
 }
 
+PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed = -1){
+    // Set the seed for random number generator
+    if (seed < 0){
+        arma::arma_rng::set_seed_random();
+    } else {
+        arma::arma_rng::set_seed(seed);
+    }    
+    // assign input values of magnetic field, potential and distance
+    // takes vector of Particles as input
+    B0 = B0_in;
+    V0 = V0_in;
+    d = d_in;
+
+    // Fill particles vector randomly
+    for (int i = 0; i < N; i++)
+    {
+        Particle p = Particle();
+        p.r = arma::vec(3).randn() * 0.1 * d;
+        p.v = arma::vec(3).randn() * 0.1 * d;
+        particles.push_back(p);
+    }
+
+    mutual_interactions = true;
+}
+*/
 // Default Constructor
 PenningTrap::PenningTrap()
 {
@@ -57,13 +107,17 @@ PenningTrap::PenningTrap()
 }
 
 // Constructor with number of random initial valued particles
-PenningTrap::PenningTrap(const int N)
+PenningTrap::PenningTrap(const int N, const int seed = -1)
 {
     B0 = 96.5;
     V0 = 2.41 * 1e+6;
     d = 500;
     // Set the seed for random number generator
-    arma::arma_rng::set_seed_random();
+    if (seed < 0){
+        arma::arma_rng::set_seed_random();
+    } else {
+        arma::arma_rng::set_seed(seed);
+    }
 
     // Fill particles vector randomly
     for (int i = 0; i < N; i++)
@@ -110,6 +164,11 @@ arma::vec PenningTrap::external_B_field(const arma::vec r)
     }
     else
         return arma::vec(3).fill(0.0);
+}
+
+// Set the electric potential
+void PenningTrap::set_V(const double V){
+    V0 = V;
 }
 
 // Force on particle_i from particle_j

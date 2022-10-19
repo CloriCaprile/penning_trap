@@ -9,7 +9,6 @@
 #include "penning.hpp"
 #include "particle.hpp"
 
-
 std::complex<double> f(double t, double x0, double z0, double v0, double omega_plus, double omega_minus){
     const std::complex<double> imag_unit(0,1);
     double A_plus = (v0 + omega_minus*x0)/(omega_minus - omega_plus);
@@ -18,7 +17,6 @@ std::complex<double> f(double t, double x0, double z0, double v0, double omega_p
     std::complex<double> f_minus = A_minus*std::exp(-omega_minus*t*imag_unit);
     return f_plus + f_minus;
 }
-
 
 int main()
 {
@@ -69,19 +67,16 @@ int main()
         std::ofstream ofile;
         ofile.open(filename);
 
-        // time vector
-        arma::vec t(n + 1);
-
         // time loop
-        t(0) = t_min;
+        double t = t_min;
 
         for (int i = 0; i < n + 1; i++){
-            t(i) = t_min + i * h;
+            t += h;
 
-            sol_anal = f(t(i), x0, z0, v0, omega_plus, omega_minus);
+            sol_anal = f(t, x0, z0, v0, omega_plus, omega_minus);
             x_anal = std::real(sol_anal);
             y_anal = std::imag(sol_anal);
-            z_anal = z0*cos(std::sqrt(omega2_z)*t(i));
+            z_anal = z0*cos(std::sqrt(omega2_z)*t);
         
             trap1.evolve_RK4(h);
             trap2.evolve_forward_Euler(h);
@@ -91,7 +86,7 @@ int main()
             erel_rk4 = err_rk4/norm(arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)));
             erel_fe = err_fe/norm(arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)));
 
-            ofile   << " " << scientific_format(t(i), width, prec)
+            ofile   << " " << scientific_format(t, width, prec)
                     << " " << scientific_format(erel_rk4, width, prec)
                     << " " << scientific_format(erel_fe, width, prec)
                     << std::endl;

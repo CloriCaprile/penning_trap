@@ -27,12 +27,13 @@ public:
 
     // Constructors
     PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in, const bool mutual_interactions);
-    PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in);
+    PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed, const bool mutual_interactions);
+    //PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in);
+    //PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed);
+    PenningTrap(const int N, const int seed);
+
     // Default Constructor
     PenningTrap();
-
-    // Constructor with number of random initial valued particles
-    PenningTrap(const int N);
 
     // Add a particle to the trap
     void add_particle(const Particle p_in);
@@ -42,6 +43,9 @@ public:
 
     // External magnetic field at point r=(x,y,z)
     arma::vec external_B_field(const arma::vec r);
+
+    // Set the electric potential
+    void set_V(const double V);
 
     // Force on particle_i from particle_j
     arma::vec force_particle(const int i,const  int j);

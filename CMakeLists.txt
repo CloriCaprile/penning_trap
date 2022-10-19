@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENTIONS OFF)
 
-# Define a "project", providing a description and a programming language
 project(penningtrap
 	VERSION 1.0
 	DESCRIPTION "Project 3 of Computational Physics course"
@@ -19,8 +18,8 @@ add_library(trace
 	src/particle.cpp
 	src/penning.cpp)
 
-#find_package(OpenMP REQUIRED)
-#target_link_libraries(trace PUBLIC OpenMP::OpenMP_CXX)
+find_package(OpenMP REQUIRED)
+target_link_libraries(trace PUBLIC OpenMP::OpenMP_CXX)
 
 find_package(Armadillo REQUIRED)
 target_link_libraries(trace PUBLIC ${ARMADILLO_LIBRARIES})
@@ -42,6 +41,10 @@ add_executable(error_analysis
 	src/error_analysis.cpp)
 target_link_libraries(error_analysis PUBLIC trace)
 
+add_executable(resonance
+	src/resonance.cpp)
+target_link_libraries(resonance PUBLIC trace)
+
 # --- TESTS ---
 add_executable(particle-test
     test/particle-test.cpp)
@@ -50,5 +53,5 @@ add_test(NAME particle-test COMMAND particle-test)
 
 #add_executable(penning-test
 #    test/penning-test.cpp)
-#target_link_libraries(pennning-test PUBLIC trace)
+#target_link_libraries(penning-test PUBLIC trace)
 #add_test(NAME penning-test COMMAND penning-test)
