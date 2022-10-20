@@ -4,6 +4,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENTIONS OFF)
+set(CMAKE_CXX_FLAGS "-O2")
 
 project(penningtrap
 	VERSION 1.0
@@ -51,7 +52,7 @@ add_executable(particle-test
 target_link_libraries(particle-test PUBLIC trace)
 add_test(NAME particle-test COMMAND particle-test)
 
-#add_executable(penning-test
-#    test/penning-test.cpp)
-#target_link_libraries(penning-test PUBLIC trace)
-#add_test(NAME penning-test COMMAND penning-test)
+add_executable(penning-test
+    test/penning-test.cpp)
+target_link_libraries(penning-test PUBLIC trace)
+add_test(NAME penning-test COMMAND penning-test)

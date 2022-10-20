@@ -40,3 +40,12 @@ Particle Particle::operator=(const Particle &other) {
     v = other.v;
     return *this;
 }
+
+// Method that returns particle values in a string
+// Format: "q m r_x r_y r_z v_x v_y v_z"
+std::string Particle::info()
+{
+    std::string info_particle = std::to_string(q) + " " + std::to_string(m) +
+                                " " + std::to_string(r(0)) + " " + std::to_string(r(1)) + " " + std::to_string(r(2)) + " " + std::to_string(v(0)) + " " + std::to_string(v(1)) + " " + std::to_string(v(2));
+    return info_particle;
+}

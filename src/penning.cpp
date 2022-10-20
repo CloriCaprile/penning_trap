@@ -15,17 +15,9 @@
 // define global variable - electrostatic constant
 #define k_e 138935.333
 
-// Method that returns particle values in a string
-// Format: "q m r_x r_y r_z v_x v_y v_z"
-std::string Particle::info()
-{
-    std::string info_particle = std::to_string(q) + " " + std::to_string(m) +
-                                " " + std::to_string(r(0)) + " " + std::to_string(r(1)) + " " + std::to_string(r(2)) + " " + std::to_string(v(0)) + " " + std::to_string(v(1)) + " " + std::to_string(v(2));
-    return info_particle;
-}
 
 // Constructor of class PenningTrap
-PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in, const bool mutual_int_in)
+PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in, bool mutual_int_in)
 {
     // assign input values of magnetic field, potential and distance
     // takes vector of Particles as input
@@ -36,14 +28,11 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
     mutual_interactions = mutual_int_in;
 }
 
-PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed = -1, const bool mutual_int_in=true){
+PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed, const bool mutual_int_in=true){
     
     // Set the seed for random number generator
-    if (seed < 0){
-        arma::arma_rng::set_seed_random();
-    } else {
-        arma::arma_rng::set_seed(seed);
-    }
+    arma::arma_rng::set_seed(seed);
+    
     // assign input values of magnetic field, potential and distance
     B0 = B0_in;
     V0 = V0_in;
@@ -60,7 +49,7 @@ PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, co
 
     mutual_interactions = mutual_int_in;
 }
-/*
+
 PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in)
 {
     // assign input values of magnetic field, potential and distance
@@ -71,7 +60,7 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
     particles = particles_in;
     mutual_interactions = true;
 }
-
+/*
 PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed = -1){
     // Set the seed for random number generator
     if (seed < 0){
