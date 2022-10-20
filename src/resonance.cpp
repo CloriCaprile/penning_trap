@@ -25,24 +25,24 @@ int main(){
     const bool mutual_interactions = false;
     double t = t_min, prog, V, n_particle=0, omegaV_min=0.2, omegaV_max = 2.5;
 
-    PenningTrap trap(N, B0, V0, d, 1, mutual_interactions);
-    //std::cout <<trap.count_particles_in()<<std::endl;
-    std::string filename = "resonance_"+ std::to_string(f) + ".txt";
+    std::string interact_str = mutual_interactions ? "int_" : "nonint_";
+    std::string filename = "resonance_" + interact_str + std::to_string(f) + ".txt";
     std::ofstream ofile;
     ofile.open(filename);
 
+    PenningTrap trap(N, B0, V0, d, 42, mutual_interactions);
+    std::vector<Particle> particles0{trap.particles};
 
     //#pragma omp parallel for
     for (double omegaV = omegaV_min; omegaV <= omegaV_max; omegaV += domegaV){
+        trap.particles = particles0;
         t=0;
         std::cout << "Now calculating " << scientific_format(omegaV, 3, 3) << "  "<<std::endl;
         for (int i = 0; i < n + 1; i++){
             
-            
-            V = V0*(1.+f*cos(omegaV*t));
+            V = V0*(1.+f*std::cos(omegaV*t));
             trap.set_V(V);
-
-            prog = 100*i/n;
+            prog = 100.*i/n;
             std::cout <<"Loading... " << std::setprecision(3) <<prog <<"%                   \r";
             trap.evolve_RK4(h);
             t += h;

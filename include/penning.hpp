@@ -27,7 +27,7 @@ public:
 
     // Constructors
     PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in, bool mutual_interactions);
-    PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed, const bool mutual_interactions);
+    PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, unsigned int seed, const bool mutual_interactions);
     PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in);
     //PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed);
     PenningTrap(const int N, const int seed);

@@ -28,7 +28,7 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
     mutual_interactions = mutual_int_in;
 }
 
-PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, const int seed, const bool mutual_int_in=true){
+PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, unsigned int seed, const bool mutual_int_in=true){
     
     // Set the seed for random number generator
     arma::arma_rng::set_seed(seed);
@@ -174,7 +174,7 @@ arma::vec PenningTrap::force_particle(const int i, const int j)
         Particle p1 = particles.at(i);
         Particle p2 = particles.at(j);
         arma::vec F = arma::vec(3);
-        // calcluate the difference vector
+        // calculate the difference vector
         arma::vec R = p1.r - p2.r;
         // ..its norm
         double s = norm(R);
