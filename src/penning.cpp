@@ -12,9 +12,6 @@
 #include "particle.hpp"
 #include "penning.hpp"
 
-// define global variable - electrostatic constant
-#define k_e 138935.333
-
 
 // Constructor of class PenningTrap
 PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_in, const std::vector<Particle> particles_in, bool mutual_int_in)
@@ -28,7 +25,7 @@ PenningTrap::PenningTrap(const double B0_in, const double V0_in, const double d_
     mutual_interactions = mutual_int_in;
 }
 
-PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, unsigned int seed, const bool mutual_int_in=true){
+PenningTrap::PenningTrap(const int N, const double B0_in, const double V0_in, const double d_in, unsigned int seed, const bool mutual_int_in){
     
     // Set the seed for random number generator
     arma::arma_rng::set_seed(seed);
@@ -96,7 +93,7 @@ PenningTrap::PenningTrap()
 }
 
 // Constructor with number of random initial valued particles
-PenningTrap::PenningTrap(const int N, const int seed = -1)
+PenningTrap::PenningTrap(const int N, const int seed)
 {
     B0 = 96.5;
     V0 = 2.41 * 1e+6;
@@ -163,6 +160,8 @@ void PenningTrap::set_V(const double V){
 // Force on particle_i from particle_j
 arma::vec PenningTrap::force_particle(const int i, const int j)
 {
+    double k_e = 138935.333;
+
     if (i == j) // self interaction is not a thing here...
     {
         arma::vec zero = arma::vec(3).fill(0.);
