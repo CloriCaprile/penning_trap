@@ -56,3 +56,7 @@ add_executable(penning-test
     test/penning-test.cpp)
 target_link_libraries(penning-test PUBLIC trace)
 add_test(NAME penning-test COMMAND penning-test)
+
+# --- BUILD FILESYSTEM ---
+file(MAKE_DIRECTORY build/plots)
+file(MAKE_DIRECTORY build/data)
