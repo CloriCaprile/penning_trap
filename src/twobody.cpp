@@ -15,7 +15,7 @@ int main()
 
     // trap parameters
     const double B0 = 96.5, V0 = 2.41 * 1e+6, d = 500;
-    const bool mutual_interactions = false;
+    const bool mutual_interactions = true;
 
     // steps, boundary t values
     const int n = 64000;
@@ -41,7 +41,7 @@ int main()
 
     // open file in order to save data
     std::string interact_str = mutual_interactions ? "int_" : "nonint_";
-    std::string filename = "data2part_"+ interact_str + std::to_string(n) + ".txt";
+    std::string filename = "data/twobody_"+ interact_str + std::to_string(n) + ".txt";
 
     std::ofstream ofile;
     ofile.open(filename);
