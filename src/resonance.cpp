@@ -49,7 +49,7 @@ int main(){
         t=0;
         std::cout << "Now calculating " << scientific_format(omegaV, 3, 4) << "  "<<std::endl;
 
-
+        //time loop
         for (int i = 0; i < n + 1; i++){
             // Set a time dependent potential
             V = V0*(1.+f*std::cos(omegaV*t));
