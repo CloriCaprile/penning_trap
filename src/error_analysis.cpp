@@ -11,46 +11,41 @@
 #include "penning.hpp"
 #include "particle.hpp"
 
-
-std::complex<double> f(double t, double x0, double z0, double v0, double omega_plus, double omega_minus){
-    const std::complex<double> imag_unit(0,1);
-    double A_plus = (v0 + omega_minus*x0)/(omega_minus - omega_plus);
-    double A_minus = -(v0 + omega_plus*x0)/(omega_minus - omega_plus);
-    std::complex<double> f_plus = A_plus*std::exp(-omega_plus*t*imag_unit);
-    std::complex<double> f_minus = A_minus*std::exp(-omega_minus*t*imag_unit);
+std::complex<double> f(double t, double x0, double z0, double v0, double omega_plus, double omega_minus)
+{
+    const std::complex<double> imag_unit(0, 1);
+    double A_plus = (v0 + omega_minus * x0) / (omega_minus - omega_plus);
+    double A_minus = -(v0 + omega_plus * x0) / (omega_minus - omega_plus);
+    std::complex<double> f_plus = A_plus * std::exp(-omega_plus * t * imag_unit);
+    std::complex<double> f_minus = A_minus * std::exp(-omega_minus * t * imag_unit);
     return f_plus + f_minus;
 }
-
 
 int main()
 {
     // particle parameters
-    const double q = 1.,  m = 40.078;
+    const double q = 1., m = 40.078;
 
     // trap parameters
     const double B0 = 96.5, V0 = 2.41 * 1e+6, d = 500;
     const bool mutual_interactions = false;
 
     // steps, boundary t values
-    const int n = 4000;
+    const int n = 8000;
     const double t_max = 50., t_min = 0., h = (t_max - t_min) / n;
 
     // initial values
     const double x0 = 20., z0 = 20., v0 = 25.;
 
-    // analytical solution parameters
-    const double omega0 = q*B0/m, omega2_z = 2.*q*V0/(m*d*d), discriminant=std::sqrt(omega0*omega0 - 2.*omega2_z);
-    const double omega_plus = (omega0+discriminant)*0.5, omega_minus = (omega0-discriminant)*0.5;
-    std::complex<double> sol_anal;
-    long double x_anal, y_anal, z_anal, err_rk4, err_fe;
-
+    // analyticytical solution parameters
+    const double omega0 = q * B0 / m, omega2_z = 2. * q * V0 / (m * d * d), discriminant = std::sqrt(omega0 * omega0 - 2. * omega2_z);
+    const double omega_plus = (omega0 + discriminant) * 0.5, omega_minus = (omega0 - discriminant) * 0.5;
+    std::complex<double> sol_analytic;
+    long double x_analytic, y_analytic, z_analytic, err_rk4, err_fe;
 
     // print parameters
     const int width = 12;
     const int prec = 12;
-
-    // time vector
-    arma::vec t(n + 1);
 
     // define empty system of particles
     std::vector<Particle> particles;
@@ -60,40 +55,81 @@ int main()
     PenningTrap trap2(B0, V0, d, particles, mutual_interactions);
 
     // add one particle to the trap
-    trap1.add_particle(Particle(q, m, arma::vec(std::to_string(x0)+" 0 "+ std::to_string(z0)), arma::vec("0 "+std::to_string(v0)+" 0")) );
-    trap2.add_particle(Particle(q, m, arma::vec(std::to_string(x0)+" 0 "+ std::to_string(z0)), arma::vec("0 "+std::to_string(v0)+" 0")) );
+    Particle p_initial = Particle(q, m, arma::vec(std::to_string(x0) + " 0 " + std::to_string(z0)), arma::vec("0 " + std::to_string(v0) + " 0"));
+    trap1.add_particle(p_initial);
+    trap2.add_particle(p_initial);
 
-    // open file in order to save to file (t,x(t),y(t),z(t))
-    std::string filename = "data/err_"+ std::to_string(n) + ".txt";
+    arma::vec delta_max_rk4 = arma::vec(4).fill(0.);
+    arma::vec delta_max_fe = arma::vec(4).fill(0.);
+    arma::vec steps = arma::vec("4000 8000 16000 32000");
+    double delta_tmp = 0.;
+    for (int k = 0; k <= 3; k++)
+    {
+        // open file in order to save to file (t,x(t),y(t),z(t))
+        std::string filename = "data/err_" + std::to_string((int)steps(k)) + ".txt";
 
-    std::ofstream ofile;
-    ofile.open(filename);
+        trap1.particles.at(0) = p_initial;
+        trap2.particles.at(0) = p_initial;
 
-    // time loop
-    t(0) = t_min;
+        std::ofstream ofile;
+        ofile.open(filename);
 
-    for (int i = 0; i < n + 1; i++){
-        t(i) = t_min + i * h;
+        // time vector
+        arma::vec t(steps(k) + 1);
 
-        sol_anal = f(t(i), x0, z0, v0, omega_plus, omega_minus);
-        x_anal = std::real(sol_anal);
-        y_anal = std::imag(sol_anal);
-        z_anal = z0*cos(std::sqrt(omega2_z)*t(i));
-    
-        trap1.evolve_RK4(h);
-        trap2.evolve_forward_Euler(h);
-        err_rk4 = norm(trap1.particles[0].r - arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)))/norm(arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)));
-        err_fe = norm(trap2.particles[0].r - arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)))/norm(arma::vec(std::to_string(x_anal)+" " +std::to_string(y_anal)+ " " + std::to_string(z_anal)));
+        // time loop
+        t(0) = t_min;
+        double h = (t_max - t_min) / steps(k);
+        for (int i = 0; i < steps(k) + 1; i++)
+        {
 
-        ofile   << " " << scientific_format(t(i), width, prec)
-                << " " << scientific_format(err_rk4, width, prec)
-                << " " << scientific_format(err_fe, width, prec)
-                << std::endl;
+            t(i) = t_min + i * h;
+
+            sol_analytic = f(t(i), x0, z0, v0, omega_plus, omega_minus);
+            x_analytic = std::real(sol_analytic);
+            y_analytic = std::imag(sol_analytic);
+            z_analytic = z0 * cos(std::sqrt(omega2_z) * t(i));
+
+            trap1.evolve_RK4(h);
+            trap2.evolve_forward_Euler(h);
+            err_rk4 = norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            err_fe = norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            delta_tmp = norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            if (delta_tmp > delta_max_rk4(k))
+            {
+                delta_max_rk4(k) = delta_tmp;
+            }
+            delta_tmp = norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            if (delta_tmp > delta_max_fe(k))
+            {
+                delta_max_fe(k) = delta_tmp;
+            }
+            ofile << " " << scientific_format(t(i), width, prec)
+                  << " " << scientific_format(err_rk4, width, prec)
+                  << " " << scientific_format(err_fe, width, prec)
+                  << std::endl;
+        }
+        // close file
+        ofile.close();
     }
+    double conv_rate_rk4 = 0., conv_rate_fe = 0.;
 
-    // close file
-    ofile.close();
+    double stepsizes_k = 0., stepsizes_k_ = 0.;
 
+    for (int k = 1; k <= 3; k++)
+    {
+        stepsizes_k = (t_max - t_min) / steps(k);
+        stepsizes_k_ = (t_max - t_min) / steps(k - 1);
+
+        conv_rate_rk4 += std::log(delta_max_rk4(k) / delta_max_rk4(k - 1)) / std::log(stepsizes_k / stepsizes_k_);
+        conv_rate_fe += std::log(delta_max_fe(k) / delta_max_fe(k - 1)) / std::log(stepsizes_k / stepsizes_k_);
+    }
+    conv_rate_rk4 /= 3;
+    conv_rate_fe /= 3;
+
+    std::cout << "CONVERGENCE RATE:" << std::endl
+              << "RK4 " << conv_rate_rk4 << std::endl
+              << "FE " << conv_rate_fe << std::endl;
     // all good
     return 0;
 }
