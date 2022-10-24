@@ -1,3 +1,5 @@
+<img align="left" width=20% src="logo.gif" />
+
 # penning_trap
 ![License](https://img.shields.io/github/license/CloriCaprile/penning_trap)
 ![Language](https://img.shields.io/badge/language-c%2B%2B-blue)
