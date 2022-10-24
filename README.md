@@ -10,6 +10,7 @@ This repo is mantained by group 100 of the course FYS3150/4150 at UiO.
 
 - [Requirements](#requirements)
 - [Building](#building)
+- [Filesystem](#filesystem)
 - [Tests](#tests)
 - [Aknowledgements](#aknowledgements)
 - [License](#license)
@@ -63,7 +64,33 @@ If it outputs correctly you should be able to build the project by runnning
 ```bash
 make
 ```
-from the same `build/` directory. In this way everything is well organized into specific folders: in the `build/` directory you can find all executables; in the  `include/` all the header files; and in the `test/` directory are stored the tests for most of the functions implemented.
+from the same `build/` directory. 
+
+## Filesystem
+The repo is organized as follows:
+```
+penning_trap
+│
+└───build/
+│   └───data/
+│   └───plots/
+│
+└───include/
+│
+└───src/
+│
+└───test/
+```
+Inside the `build/` directory you can find the executables and two subfolders: `build/data/` for storing the resulting data and `build/plots/` for storing the plots of the same resulting data.
+In the `include/` directory are stored all the header filese and in the `src/` directory are stored the source files.
+Here you can find also the python scripts that make the graphs and store them in `build/plots/`. For example, to make the plots of `twobody.cpp` simply run
+```bash
+python3 twobody.py
+```
+from `src/`.
+The `test/` directory is meant for the testing of the built code.
+
+
 
 ## Tests
 CMake provides an easy command for code testing, i.e. from `build/` you can run
