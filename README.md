@@ -6,7 +6,13 @@
 ![Size](https://img.shields.io/github/repo-size/CloriCaprile/penning_trap)
 
 Basic implementation of a simulated Penning trap in C++.
+
+
+This repo contains specific code for studying the motion of a chosen number of particles with any value of charge and mass, with or without mutual interaction inside of the Penning trap. It is also possible to study a time-dependent potential. 
+The Python code used to generate relevant plots is also included. 
+
 This repo is mantained by group 100 of the course FYS3150/4150 at UiO.
+
 
 ## Table of contents
 
