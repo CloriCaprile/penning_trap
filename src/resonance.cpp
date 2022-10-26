@@ -24,22 +24,22 @@ int main(){
                     d = 500,
 
                     // Change for fine tuning
-                    domegaV = 0.0001,
+                    domegaV = 0.005,
                     // Change for different values of frequency
-                    f = 0.4;
+                    f = 0.01;
 
     // Set on/off interaction between particles               
-    const bool mutual_interactions = false;
-    double t = t_min, prog, V, n_particle=0, omegaV_min=1.241, omegaV_max = 1.253;
+    const bool mutual_interactions = true;
+    double t = t_min, prog, V, n_particle=0, omegaV_min=0.2, omegaV_max = 2.5;
 
 
     //Set file name
     std::string interact_str = mutual_interactions ? "int_" : "nonint_";
-    std::string filename = "resonance_" + interact_str + std::to_string(f) + ".txt";
+    std::string filename = "15resonance_" + interact_str + std::to_string(f) + "_" + std::to_string(domegaV) + ".txt";
     std::ofstream ofile;
     ofile.open(filename);
 
-    PenningTrap trap(N, B0, V0, d, 42, mutual_interactions);
+    PenningTrap trap(N, B0, V0, d, 15, mutual_interactions);
     std::vector<Particle> particles0{trap.particles};
 
     // Angular frequancy loop

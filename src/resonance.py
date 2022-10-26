@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.legend_handler import HandlerTuple
 
-df1 = pd.read_csv("../build/resonance_int_0.100000.txt", names=["omega", "n"], sep=" ")
-df2 = pd.read_csv("../build/resonance_int_0.400000.txt", names=["omega", "n"], sep=" ")
-df3 = pd.read_csv("../build/resonance_int_0.700000.txt", names=["omega", "n"], sep=" ")
+df1 = pd.read_csv("../build/resonance_nonint_0.100000.txt", names=["omega", "n"], sep=" ")
+df2 = pd.read_csv("../build/resonance_nonint_0.400000.txt", names=["omega", "n"], sep=" ")
+df3 = pd.read_csv("../build/resonance_nonint_0.700000.txt", names=["omega", "n"], sep=" ")
 
 # Plot style options
 w = 5
@@ -22,5 +21,5 @@ plt.plot(df3.omega, df3.n, color=cmap(4))
 plt.xlabel("$\omega$ (Hz)")
 plt.ylabel("$n$")
 plt.legend(loc='best')
-plt.savefig("resonance.pdf") if save_fig else plt.show()
+plt.savefig("resonance_nonint_large.pdf") if save_fig else plt.show()
 plt.cla()
