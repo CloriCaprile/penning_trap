@@ -19,9 +19,6 @@ add_library(trace
 	src/particle.cpp
 	src/penning.cpp)
 
-#find_package(OpenMP REQUIRED)
-#target_link_libraries(trace PUBLIC OpenMP::OpenMP_CXX)
-
 find_package(Armadillo REQUIRED)
 target_link_libraries(trace PUBLIC ${ARMADILLO_LIBRARIES})
 include_directories(${ARMADILLO_INCLUDE_DIRS})
