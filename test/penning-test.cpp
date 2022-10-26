@@ -8,9 +8,7 @@
 #include "particle.hpp"
 #include "penning.hpp"
 
-int main()
-{
-
+void test_constructors(){
     // test default constructor
     PenningTrap trap = PenningTrap();
     assert(trap.B0 == 96.5);
@@ -61,72 +59,87 @@ int main()
     assert(trap5.V0 == 2.41 * 1e+6);
     assert(trap5.d == 500);
     assert(trap5.mutual_interactions == true);
+}
 
+void  test_add_particle(){
     // test add particle
-    PenningTrap trap6 = PenningTrap(3, 42);
-    assert(trap6.particles.size() == 3);
-    trap6.particles.push_back(Particle(1.2, 27., arma::vec(3).fill(1.), arma::vec(3).fill(6.)));
-    assert(trap6.particles.at(3).q == 1.2);
-    assert(trap6.particles.at(3).m == 27.);
-    assert(all(trap6.particles.at(3).r == arma::vec(3).fill(1.)));
-    assert(all(trap6.particles.at(3).v == arma::vec(3).fill(6.)));
+    PenningTrap trap = PenningTrap(3, 42);
+    assert(trap.particles.size() == 3);
+    trap.particles.push_back(Particle(1.2, 27., arma::vec(3).fill(1.), arma::vec(3).fill(6.)));
+    assert(trap.particles.at(3).q == 1.2);
+    assert(trap.particles.at(3).m == 27.);
+    assert(all(trap.particles.at(3).r == arma::vec(3).fill(1.)));
+    assert(all(trap.particles.at(3).v == arma::vec(3).fill(6.)));
+}
 
+void test_fields(){
     // test electric field
-    PenningTrap trap7 = PenningTrap();
-    arma::vec E = trap7.external_E_field(arma::vec("0. 1. 1."));
-    double tmp = trap.V0 / (trap.d * trap.d);
+    PenningTrap trapE = PenningTrap();
+    arma::vec E = trapE.external_E_field(arma::vec("0. 1. 1."));
+    double V0_tmp = 2.41 * 1e+6, d_tmp = 500, E_tmp = V0_tmp/(d_tmp*d_tmp);
     assert(E(0) == 0);
-    assert(E(1) == tmp);
-    assert(E(2) == -2 * tmp);
+    assert(E(1) == E_tmp);
+    assert(E(2) == -2 * E_tmp);
     arma::vec R = arma::vec(3).fill(0.);
-    R(2) = trap.d + 10.;
-    arma::vec E2 = trap7.external_E_field(R);
+    // field is zero outside the trap
+    R(2) = d_tmp + 10.;
+    arma::vec E2 = trapE.external_E_field(R);
     assert(all(E2 == arma::vec(3).fill(0.)));
 
     // test magnetic field
-    PenningTrap trap8 = PenningTrap();
-    arma::vec B = trap8.external_B_field(arma::vec("0. 1. 1."));
+    PenningTrap trapB = PenningTrap();
+    arma::vec B = trapB.external_B_field(arma::vec("0. 1. 1."));
     assert(B(0) == 0);
     assert(B(1) == 0);
-    assert(B(2) == trap8.B0);
-    arma::vec R2 = arma::vec(3).fill(0.);
-    R2(2) = trap.d + 10.;
-    arma::vec B2 = trap8.external_E_field(R2);
+    assert(B(2) == trapB.B0);
+    // field is zero outside the trap
+    arma::vec B2 = trapB.external_B_field(R);
     assert(all(B2 == arma::vec(3).fill(0.)));
 
     // test set_v
-    trap8.set_V(232.);
-    assert(trap8.V0 == 232.);
+    trapB.set_V(232.);
+    assert(trapB.V0 == 232.);
+}
 
+void test_forces(){
     // test force particle
     double k_e = 138935.333;
     arma::vec F = arma::vec(3);
-    Particle p1 = trap6.particles.at(1);
-    Particle p2 = trap6.particles.at(2);
+    PenningTrap trap = PenningTrap(3, 42);
+    trap.particles.push_back(Particle(1.2, 27., arma::vec(3).fill(1.), arma::vec(3).fill(6.)));
+    Particle p1 = trap.particles.at(1);
+    Particle p2 = trap.particles.at(2);
     arma::vec R_ = p1.r - p2.r;
     double s = norm(R_);
     F = k_e * p1.q * p2.q * R_ / (s * s * s);
-    assert(all(trap6.force_particle(1, 1) == arma::vec(3).fill(0.)));
-    assert(all(trap6.force_particle(1, 2) == F));
-
-    // test total force particles !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    trap6.mutual_interactions = false;
-    assert(all(trap6.total_force_particles(1) == arma::vec(3).fill(0.)));
-    trap6.mutual_interactions = true;
-    arma::vec F_ = arma::vec(3).fill(0.);
-    for (int j = 0; j < trap6.particles.size(); j++)
+    assert(all(trap.force_particle(1, 1) == arma::vec(3).fill(0.)));
+    assert(all(trap.force_particle(1, 2) == F));
+    
+    // test total force particles
+    arma::vec F_tmp = arma::vec(3).fill(0.);
+    trap.mutual_interactions = false;
+    assert(all(trap.total_force_particles(1) == F_tmp));
+    trap.mutual_interactions = true;
+    for (int j = 0; j < trap.particles.size(); j++)
     {
-        F_ += trap6.force_particle(1, j);
+        F_tmp += trap.force_particle(1, j);
     }
-    assert(all(trap6.total_force_particles(1) - F_ < 2.)); // questo non passa
+    assert(all(trap.total_force_particles(1) == F_tmp));
 
     // test total force external
-    Particle e = trap6.particles.at(1);
-    assert(all(trap6.total_force_external(1) == e.q * trap6.external_E_field(e.r) + e.q * arma::cross(e.v, trap6.external_B_field(e.r))));
+    Particle e = trap.particles.at(1);
+    assert(all(trap.total_force_external(1) == e.q * trap.external_E_field(e.r) + e.q * arma::cross(e.v, trap.external_B_field(e.r))));
 
-    // test total force !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    assert( all( trap6.total_force(1) - trap6.total_force_external(1) - trap6.total_force_particles(1) < 100.)); //questo non passa
+    // test total force
+    assert( all( trap.total_force(1) - trap.total_force_particles(1) == e.q * trap.external_E_field(e.r) + e.q * arma::cross(e.v, trap.external_B_field(e.r))  ));
+}
 
+int main()
+{
+    test_constructors();
+    test_add_particle();
+    test_fields();
+    test_forces();
 
     return 0;
 }
