@@ -35,11 +35,11 @@ int main(){
 
     //Set file name
     std::string interact_str = mutual_interactions ? "int_" : "nonint_";
-    std::string filename = "a1" + interact_str + std::to_string(f) + "_" + std::to_string(domegaV) + ".txt";
+    std::string filename = "resonance" + interact_str + std::to_string(f) + "_" + std::to_string(domegaV) + ".txt";
     std::ofstream ofile;
     ofile.open(filename);
 
-    PenningTrap trap(N, B0, V0, d, 15, mutual_interactions);
+    PenningTrap trap(N, B0, V0, d, 42, mutual_interactions);
     std::vector<Particle> particles0{trap.particles};
 
     // Angular frequancy loop
