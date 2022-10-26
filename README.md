@@ -105,36 +105,27 @@ CMake provides an easy command for code testing, i.e. from `build/` you can run
 ctest
 ```
 In this way all tests are run.
-## Aknowledgements
-<button  style="border: transparent; background-color: transparent;">
-  <a href=https://github.com/CloriCaprile>Clori</a>
-  <div float=left>
-    <img align="left" src="https://avatars.githubusercontent.com/u/51904841?v=4" margin=0 width=50> 
-  </div>
-</button>
-<button style="border: transparent; background-color: transparent;">
-  <a href=https://github.com/diegoscantam>Diego</a>
-  <div float=center>
-    <img align="left" src="https://avatars.githubusercontent.com/u/112166702?v=" width=50> 
-  </div>
-</button>
-<button style="border: transparent; background-color: transparent;">
-  <a href=https://github.com/ngrlcu>Luca</a>
-  <div>
-    <img align="left" src="https://avatars.githubusercontent.com/u/79975678?s=400&u=6770b5f0354ed29bf9a54e7f27a8250bb812c279&v=4" width=50> 
-  </div>
-</button>
-<button style="border: transparent; background-color: transparent;">
-  <a href=https://github.com/martapisci>Marta</a>
-  <div>
-    <img align="left" src="https://avatars.githubusercontent.com/u/112163092?v=4" width=50>
-  </div>
-</button>
-
-
-
 
 
 ## License
 
 The code here presented is released under version 3 of the [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.html).
+
+
+## Aknowledgements
+<p align="center">
+<button  style="border: transparent; background-color: transparent;">
+    <img align="left" width=10% src="https://avatars.githubusercontent.com/u/51904841?v=4"> 
+</button>
+<button style="border: transparent; background-color: transparent;">
+    <img align="left" width=10% src="https://avatars.githubusercontent.com/u/112166702?v="> 
+</button>
+<button style="border: transparent; background-color: transparent;">
+    <img align="left" width=10% src="https://avatars.githubusercontent.com/u/79975678?s=400&u=6770b5f0354ed29bf9a54e7f27a8250bb812c279&v=4"> 
+</button>
+<button style="border: transparent; background-color: transparent;">
+    <img align="left" width=10% src="https://avatars.githubusercontent.com/u/112163092?v=4">
+</button>
+</p>
+
+
