@@ -92,15 +92,17 @@ int main()
             x_analytic = std::real(sol_analytic);
             y_analytic = std::imag(sol_analytic);
             z_analytic = z0 * cos(std::sqrt(omega2_z) * t(i));
+            arma::vec r_analytic = arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic));
 
             trap1.evolve_RK4(h);
             trap2.evolve_forward_Euler(h);
 
-            err_rk4 = arma::norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            err_fe = arma::norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            delta_tmp_rk4(i) = arma::norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            delta_tmp_fe(i) = arma::norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            //std::cout << delta_tmp_rk4(i) << "  "<< delta_tmp_fe(i) << std::endl;
+            // relative error
+            err_rk4 = arma::norm(trap1.particles[0].r - r_analytic) / norm(r_analytic);
+            err_fe = arma::norm(trap2.particles[0].r - r_analytic) / norm(r_analytic);
+            // absolute error
+            delta_tmp_rk4(i) = arma::norm(trap1.particles[0].r - r_analytic);
+            delta_tmp_fe(i) = arma::norm(trap2.particles[0].r - r_analytic);
 
             ofile << " " << scientific_format(t(i), width, prec)
                   << " " << scientific_format(err_rk4, width, prec)
@@ -109,9 +111,10 @@ int main()
         }
         // close file
         ofile.close();
+        // save the max absolute error
         delta_max_rk4(k) = arma::max(delta_tmp_rk4);
         delta_max_fe(k) = arma::max(delta_tmp_fe);
-        std::cout << delta_max_rk4(k) << "  " << delta_max_fe(k) << std::endl;
+        //std::cout << delta_max_rk4(k) << "  " << delta_max_fe(k) << std::endl;
     }
     double conv_rate_rk4 = 0., conv_rate_fe = 0.;
 
@@ -127,8 +130,6 @@ int main()
         // std::cout << std::log(delta_max_rk4(k) / delta_max_rk4(k - 1)) / (3 * std::log(stepsizes_k / stepsizes_k_))<< " "<< std::log(delta_max_fe(k) / delta_max_fe(k - 1)) / (3 * std::log(stepsizes_k / stepsizes_k_)) << std::endl;
         //std::cout << std::log(stepsizes_k / stepsizes_k_) << std::endl;
     }
-    // conv_rate_rk4 /= 3;
-    // conv_rate_fe /= 3;
 
     std::cout << "CONVERGENCE RATE:" << std::endl
               << "RK4 " << conv_rate_rk4 << std::endl
