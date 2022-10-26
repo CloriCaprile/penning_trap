@@ -26,16 +26,16 @@ int main(){
                     // Change for fine tuning
                     domegaV = 0.005,
                     // Change for different values of frequency
-                    f = 0.01;
+                    f = 0.7;
 
     // Set on/off interaction between particles               
     const bool mutual_interactions = true;
-    double t = t_min, prog, V, n_particle=0, omegaV_min=0.2, omegaV_max = 2.5;
+    double t = t_min, prog, V, n_particle=0, omegaV_min=1.0, omegaV_max = 1.1;
 
 
     //Set file name
     std::string interact_str = mutual_interactions ? "int_" : "nonint_";
-    std::string filename = "15resonance_" + interact_str + std::to_string(f) + "_" + std::to_string(domegaV) + ".txt";
+    std::string filename = "a1" + interact_str + std::to_string(f) + "_" + std::to_string(domegaV) + ".txt";
     std::ofstream ofile;
     ofile.open(filename);
 
