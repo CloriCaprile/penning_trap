@@ -1,4 +1,4 @@
-<img align="left" width=20% src="logo.gif" />
+<img align="right" width=20% src="logo.gif" />
 
 # penning_trap
 ![License](https://img.shields.io/github/license/CloriCaprile/penning_trap)
@@ -7,9 +7,8 @@
 
 Basic implementation of a simulated Penning trap in C++.
 
-
-This repo contains specific code for studying the motion of a chosen number of particles with any value of charge and mass, with or without mutual interaction inside of the Penning trap. It is also possible to study a time-dependent potential. 
-The Python code used to generate relevant plots is also included. 
+Here you can find the code needed for studying the motion of a chosen number of particles with any value of charge and mass, with or without mutual interaction inside of the Penning trap. It is also possible to add a time-dependent potential. 
+The Python code used to generate relevant plots is also included.
 
 This repo is mantained by group 100 of the course FYS3150/4150 at UiO.
 
@@ -110,25 +109,25 @@ In this way all tests are run.
 <button  style="border: transparent; background-color: transparent;">
   <a href=https://github.com/CloriCaprile>Clori</a>
   <div float=left>
-    <img src="https://avatars.githubusercontent.com/u/51904841?v=4" margin=0 width=50> 
+    <img align="left" src="https://avatars.githubusercontent.com/u/51904841?v=4" margin=0 width=50> 
   </div>
 </button>
 <button style="border: transparent; background-color: transparent;">
   <a href=https://github.com/diegoscantam>Diego</a>
   <div float=center>
-    <img src="https://avatars.githubusercontent.com/u/112166702?v=" width=50> 
+    <img align="left" src="https://avatars.githubusercontent.com/u/112166702?v=" width=50> 
   </div>
 </button>
 <button style="border: transparent; background-color: transparent;">
   <a href=https://github.com/ngrlcu>Luca</a>
   <div>
-    <img src="https://avatars.githubusercontent.com/u/79975678?s=400&u=6770b5f0354ed29bf9a54e7f27a8250bb812c279&v=4" width=50> 
+    <img align="left" src="https://avatars.githubusercontent.com/u/79975678?s=400&u=6770b5f0354ed29bf9a54e7f27a8250bb812c279&v=4" width=50> 
   </div>
 </button>
 <button style="border: transparent; background-color: transparent;">
   <a href=https://github.com/martapisci>Marta</a>
   <div>
-    <img src="https://avatars.githubusercontent.com/u/112163092?v=4" width=50>
+    <img align="left" src="https://avatars.githubusercontent.com/u/112163092?v=4" width=50>
   </div>
 </button>
 
