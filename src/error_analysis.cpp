@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -31,8 +29,8 @@ int main()
     const bool mutual_interactions = false;
 
     // steps, boundary t values
-    const int n = 8000;
-    const double t_max = 50., t_min = 0., h = (t_max - t_min) / n;
+    // const int n = 8000;
+    const double t_max = 50., t_min = 0.; //, h = (t_max - t_min) / n;
 
     // initial values
     const double x0 = 20., z0 = 20., v0 = 25.;
@@ -59,11 +57,12 @@ int main()
     trap1.add_particle(p_initial);
     trap2.add_particle(p_initial);
 
-    arma::vec delta_max_rk4 = arma::vec(4).fill(0.);
-    arma::vec delta_max_fe = arma::vec(4).fill(0.);
     arma::vec steps = arma::vec("4000 8000 16000 32000");
-    double delta_tmp = 0.;
-    for (int k = 0; k <= 3; k++)
+    arma::vec delta_max_rk4 = arma::vec(steps.size()).fill(0.);
+    arma::vec delta_max_fe = arma::vec(steps.size()).fill(0.);
+
+
+    for (int k = 0; k <= steps.size()-1; k++)
     {
         // open file in order to save to file (t,x(t),y(t),z(t))
         std::string filename = "data/err_" + std::to_string((int)steps(k)) + ".txt";
@@ -71,16 +70,20 @@ int main()
         trap1.particles.at(0) = p_initial;
         trap2.particles.at(0) = p_initial;
 
+        arma::vec delta_tmp_rk4 = arma::vec(steps(k)).fill(0.);
+        arma::vec delta_tmp_fe = arma::vec(steps(k)).fill(0.);
+
         std::ofstream ofile;
         ofile.open(filename);
 
         // time vector
         arma::vec t(steps(k) + 1);
 
+        //std::cout << "NEW NUMBER OF STEPS__________________________" << std::endl;
         // time loop
         t(0) = t_min;
         double h = (t_max - t_min) / steps(k);
-        for (int i = 0; i < steps(k) + 1; i++)
+        for (int i = 0; i < steps(k) - 1; i++)
         {
 
             t(i) = t_min + i * h;
@@ -92,18 +95,13 @@ int main()
 
             trap1.evolve_RK4(h);
             trap2.evolve_forward_Euler(h);
-            err_rk4 = norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            err_fe = norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            delta_tmp = norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            if (delta_tmp > delta_max_rk4(k))
-            {
-                delta_max_rk4(k) = delta_tmp;
-            }
-            delta_tmp = norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
-            if (delta_tmp > delta_max_fe(k))
-            {
-                delta_max_fe(k) = delta_tmp;
-            }
+
+            err_rk4 = arma::norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            err_fe = arma::norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic))) / norm(arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            delta_tmp_rk4(i) = arma::norm(trap1.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            delta_tmp_fe(i) = arma::norm(trap2.particles[0].r - arma::vec(std::to_string(x_analytic) + " " + std::to_string(y_analytic) + " " + std::to_string(z_analytic)));
+            //std::cout << delta_tmp_rk4(i) << "  "<< delta_tmp_fe(i) << std::endl;
+
             ofile << " " << scientific_format(t(i), width, prec)
                   << " " << scientific_format(err_rk4, width, prec)
                   << " " << scientific_format(err_fe, width, prec)
@@ -111,21 +109,26 @@ int main()
         }
         // close file
         ofile.close();
+        delta_max_rk4(k) = arma::max(delta_tmp_rk4);
+        delta_max_fe(k) = arma::max(delta_tmp_fe);
+        std::cout << delta_max_rk4(k) << "  " << delta_max_fe(k) << std::endl;
     }
     double conv_rate_rk4 = 0., conv_rate_fe = 0.;
 
     double stepsizes_k = 0., stepsizes_k_ = 0.;
 
-    for (int k = 1; k <= 3; k++)
+    for (int k = 1; k <= steps.size()-1; k++)
     {
         stepsizes_k = (t_max - t_min) / steps(k);
         stepsizes_k_ = (t_max - t_min) / steps(k - 1);
-
-        conv_rate_rk4 += std::log(delta_max_rk4(k) / delta_max_rk4(k - 1)) / std::log(stepsizes_k / stepsizes_k_);
-        conv_rate_fe += std::log(delta_max_fe(k) / delta_max_fe(k - 1)) / std::log(stepsizes_k / stepsizes_k_);
+        //std::cout << "Stepsize   " << stepsizes_k << "    " << stepsizes_k_ << "    " <<std::log(stepsizes_k / stepsizes_k_) << std::endl;
+        conv_rate_rk4 += std::log(delta_max_rk4(k) / delta_max_rk4(k - 1)) / ( (steps.size()-1) * std::log(stepsizes_k / stepsizes_k_));
+        conv_rate_fe += std::log(delta_max_fe(k) / delta_max_fe(k - 1)) / ( (steps.size()-1) * std::log(stepsizes_k / stepsizes_k_));
+        // std::cout << std::log(delta_max_rk4(k) / delta_max_rk4(k - 1)) / (3 * std::log(stepsizes_k / stepsizes_k_))<< " "<< std::log(delta_max_fe(k) / delta_max_fe(k - 1)) / (3 * std::log(stepsizes_k / stepsizes_k_)) << std::endl;
+        //std::cout << std::log(stepsizes_k / stepsizes_k_) << std::endl;
     }
-    conv_rate_rk4 /= 3;
-    conv_rate_fe /= 3;
+    // conv_rate_rk4 /= 3;
+    // conv_rate_fe /= 3;
 
     std::cout << "CONVERGENCE RATE:" << std::endl
               << "RK4 " << conv_rate_rk4 << std::endl
